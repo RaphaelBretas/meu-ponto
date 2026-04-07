@@ -384,7 +384,11 @@ const HISTORICAL=[
   {date:'2026-03-19',events:[{id:'h37',type:'entry',time:'08:10'},{id:'h38',type:'break',time:'12:01'},{id:'h39',type:'return',time:'13:01'}]},
 ];
 
-let state={events:[],config:{entrada:'08:00',saida:'17:53',almoco:65}};
+let state={
+  events:[],
+  balanceOffset:420, // +7 horas em minutos
+  config:{entrada:'08:00',saida:'17:53',almoco:65}
+};
 let expandedDates=new Set();
 
 function todayKey(){
@@ -611,7 +615,7 @@ function renderHistorico(){
 function renderBanco(){
   const dates=[...new Set((state.events||[]).map(e=>e.date))].sort((a,b)=>b.localeCompare(a));
   const jornadaMins=toMins(state.config?.saida||'17:53')-toMins(state.config?.entrada||'08:00')-(state.config?.almoco||65);
-  let total=0;const rows=[];
+  let total = state.balanceOffset || 0;const rows=[];
   dates.forEach(d=>{
     const evs=(state.events||[]).filter(e=>e.date===d);
     const specialType=getDaySpecialType(evs);
